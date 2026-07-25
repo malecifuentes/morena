@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "bakery": "Morena",
+    "name": "Red Velvet Heart Cake",
+    "category": "Cake",
+    "price": 180,
+    "available": true
+  },
+  {
+    "id": 2,
+    "bakery": "Morena",
+    "name": "Box of 6 Cupcakes",
+    "category": "Cupcakes",
+    "price": 95,
+    "available": true
+  },
+  {
+    "id": 3,
+    "bakery": "Morena",
+    "name": "Banana Bread",
+    "category": "Bread",
+    "price": 65,
+    "available": true
+  }
+]

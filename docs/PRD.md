@@ -16,8 +16,17 @@ Many small bakeries receive orders manually through WhatsApp or social media, ma
 
 ## Target Users
 
-- Bakery owners
-- Bakery customers
+### Primary User: Small Bakery Owners
+
+The primary users are owners of small bakeries and dessert businesses that currently receive customer enquiries and order requests manually through WhatsApp, Instagram or other social media channels. These owners often manage products, prices, availability and customer information through separate conversations, which can make the process difficult to organise and increase the risk of delayed responses or incomplete requests.
+
+They need a simple digital storefront where they can display their own products, prices and branding while keeping their information separated from other bakery tenants.
+
+### Secondary User: Bakery Customers
+
+The secondary users are customers who want to browse products, check prices and availability, and submit an order request without exchanging multiple messages with the bakery.
+
+They need a clear and simple ordering experience that shows the correct information for the selected bakery and confirms that their request was successfully received.
 
 ## Goal
 

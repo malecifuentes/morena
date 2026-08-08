@@ -4,6 +4,7 @@
     "bakery": "Morena",
     "name": "Red Velvet Heart Cake",
     "category": "Cake",
+    "description": "A heart-shaped red velvet cake with a soft crumb and smooth cream cheese frosting.",
     "price": 180,
     "available": true
   },
@@ -12,6 +13,7 @@
     "bakery": "Morena",
     "name": "Box of 6 Cupcakes",
     "category": "Cupcakes",
+    "description": "Six soft cupcakes finished with swirls of creamy frosting.",
     "price": 95,
     "available": true
   },
@@ -20,6 +22,7 @@
     "bakery": "Morena",
     "name": "Banana Bread",
     "category": "Bread",
+    "description": "A moist, tender loaf made with ripe bananas and a gently caramelized crust.",
     "price": 65,
     "available": true
   }

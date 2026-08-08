@@ -22,6 +22,8 @@ Warm, artisanal, trustworthy. Not this: not a generic corporate e-commerce site 
 ## Screens
 
 - Product Catalogue (home)
+- Product Details and Pricing
+- Keep typography, spacing, colors, and visual styling consistent across both screens.
 
 ## Stack, pinned
 

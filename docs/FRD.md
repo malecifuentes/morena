@@ -54,27 +54,30 @@ The customer browses the products available for the selected bakery and chooses 
 - Product category
 - Product price
 - Availability
-- Button to request the product
+- Quantity selector
+- Navigation back to the Product Catalogue
 
 ### What the user does
 
-The customer reviews the product information and decides whether to continue with the order request.
+The customer reviews the product information, selects a quantity, and can return to the Product Catalogue.
 
 ### Inputs
 
 - Selected product
 - Bakery identifier
+- Selected quantity
 
 ### Outputs
 
 - Product details
 - Product price
 - Availability status
-- Navigation to the online order request form
+- Selected quantity
+- Navigation back to the Product Catalogue
 
 ### Edge Cases
 
-- If the product is unavailable, the order button is disabled.
+- If the product is unavailable, the availability status clearly indicates that the product is unavailable.
 - If the product does not belong to the selected bakery, it is not displayed.
 - If the product cannot be found, the system displays an error message.
 

@@ -6,6 +6,25 @@ This project is a subscription-based digital platform designed for small bakerie
 
 The platform allows multiple bakeries, operating as independent tenants, to manage their own products, prices, branding and online order requests. Morena is the pilot bakery used to validate the platform before onboarding additional bakery tenants.
 
+## Live Prototype
+
+The current Morena Bakery prototype is available at:
+
+https://malecifuentes.github.io/morena/
+
+### Currently Working
+
+- Product Catalogue
+- Product Details and Pricing
+- Quantity selection
+- Navigation from the catalogue to product details
+- Navigation from product details back to the catalogue
+
+### Not Yet Connected
+
+- Online order request form
+- Order request confirmation
+
 ## Problem
 
 Many small bakeries currently receive customer orders manually through WhatsApp, Instagram or other social media channels. Customers often need to exchange several messages to ask about available products, prices, quantities and delivery dates. This process can create delayed responses, incomplete information and difficulties organising customer requests.

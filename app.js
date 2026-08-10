@@ -5,6 +5,12 @@ const productDetail = document.querySelector("#product-detail");
 
 let products = [];
 
+const productImages = {
+  1: "assets/images/red-velvet-heart-cake.jpg",
+  2: "assets/images/box-6-cupcakes.jpg",
+  3: "assets/images/banana-bread.png",
+};
+
 const currency = new Intl.NumberFormat("es-GT", {
   style: "currency",
   currency: "GTQ",
@@ -31,6 +37,7 @@ function showCatalogue() {
   catalogue.innerHTML = products.map((product) => `
     <div class="col-12 col-md-6 col-lg-4">
       <article class="card product-card">
+        <img class="card-img-top product-image" src="${productImages[product.id]}" alt="${product.name}">
         <div class="card-body">
           <p class="category">${product.category}</p>
           <h2>${product.name}</h2>

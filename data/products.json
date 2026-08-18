@@ -6,6 +6,7 @@
     "category": "Cake",
     "description": "A heart-shaped red velvet cake with a soft crumb and smooth cream cheese frosting.",
     "price": 180,
+    "image": "assets/images/red-velvet-heart-cake.jpg",
     "available": true
   },
   {
@@ -15,6 +16,7 @@
     "category": "Cupcakes",
     "description": "Six soft cupcakes finished with swirls of creamy frosting.",
     "price": 95,
+    "image": "assets/images/box-6-cupcakes.jpg",
     "available": true
   },
   {
@@ -24,6 +26,7 @@
     "category": "Bread",
     "description": "A moist, tender loaf made with ripe bananas and a gently caramelized crust.",
     "price": 65,
+    "image": "assets/images/banana-bread.png",
     "available": true
   }
 ]

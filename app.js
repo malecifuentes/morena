@@ -5,12 +5,6 @@ const productDetail = document.querySelector("#product-detail");
 
 let products = [];
 
-const productImages = {
-  1: "assets/images/red-velvet-heart-cake.jpg",
-  2: "assets/images/box-6-cupcakes.jpg",
-  3: "assets/images/banana-bread.png",
-};
-
 const currency = new Intl.NumberFormat("es-GT", {
   style: "currency",
   currency: "GTQ",
@@ -19,111 +13,250 @@ const currency = new Intl.NumberFormat("es-GT", {
 
 function availabilityMarkup(available) {
   const status = available ? "Available" : "Unavailable";
-  const className = available ? "availability" : "availability unavailable";
+  const className = available
+    ? "availability"
+    : "availability unavailable";
+
   return `<span class="${className}">${status}</span>`;
 }
 
 function showCatalogue() {
   history.replaceState({}, "", window.location.pathname);
   document.title = "Morena Bakery — Product Catalogue";
+
   detailView.classList.add("d-none");
   catalogueView.classList.remove("d-none");
 
   if (!products.length) {
-    catalogue.innerHTML = `<div class="col-12"><p class="empty-state">No products are available right now. Please check again soon.</p></div>`;
+    catalogue.innerHTML = `
+      <div class="col-12">
+        <p class="empty-state">
+          No products are available right now. Please check again soon.
+        </p>
+      </div>
+    `;
     return;
   }
 
-  catalogue.innerHTML = products.map((product) => `
-    <div class="col-12 col-md-6 col-lg-4">
-      <article class="card product-card">
-        <img class="card-img-top product-image" src="${productImages[product.id]}" alt="${product.name}">
-        <div class="card-body">
-          <p class="category">${product.category}</p>
-          <h2>${product.name}</h2>
-          <div class="mt-auto">
-            <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-              <span class="price">${currency.format(product.price)}</span>
-              ${availabilityMarkup(product.available)}
+  catalogue.innerHTML = products
+    .map(
+      (product) => `
+        <div class="col-12 col-md-6 col-lg-4">
+          <article class="card product-card">
+
+            <img
+              class="card-img-top product-image"
+              src="${product.image}"
+              alt="${product.name}"
+            >
+
+            <div class="card-body">
+              <p class="category">${product.category}</p>
+
+              <h2>${product.name}</h2>
+
+              <div class="mt-auto">
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+                  <span class="price">
+                    ${currency.format(product.price)}
+                  </span>
+
+                  ${availabilityMarkup(product.available)}
+                </div>
+
+                <a
+                  class="card-link"
+                  href="?product=${product.id}"
+                  data-product-id="${product.id}"
+                >
+                  View details
+                  <span aria-hidden="true">→</span>
+                </a>
+
+              </div>
             </div>
-            <a class="card-link" href="?product=${product.id}" data-product-id="${product.id}">View details <span aria-hidden="true">→</span></a>
-          </div>
+
+          </article>
         </div>
-      </article>
-    </div>
-  `).join("");
+      `
+    )
+    .join("");
 }
 
 function showDetail(productId, pushState = false) {
-  const product = products.find((item) => item.id === Number(productId));
+  const product = products.find(
+    (item) => item.id === Number(productId)
+  );
 
   catalogueView.classList.add("d-none");
   detailView.classList.remove("d-none");
 
   if (pushState) {
-    history.pushState({ productId }, "", `?product=${productId}`);
+    history.pushState(
+      { productId },
+      "",
+      `?product=${productId}`
+    );
   }
 
   if (!product || !product.available) {
     document.title = "Product unavailable — Morena Bakery";
-    productDetail.innerHTML = `<p class="empty-state">This product is not available right now. Please choose another product.</p>`;
+
+    productDetail.innerHTML = `
+      <p class="empty-state">
+        This product is not available right now.
+        Please choose another product.
+      </p>
+    `;
+
     return;
   }
 
   document.title = `${product.name} — Morena Bakery`;
+
   productDetail.innerHTML = `
     <article class="detail-panel">
-      <div class="detail-copy">
-        <p class="category">${product.category}</p>
-        <h1 id="product-name">${product.name}</h1>
-        <p class="description">${product.description}</p>
-        <div class="detail-meta">
-          <span class="price">${currency.format(product.price)}</span>
-          ${availabilityMarkup(product.available)}
-        </div>
-        <div class="quantity-block">
-          <label for="quantity">Quantity</label>
-          <select id="quantity" class="form-select" aria-label="Quantity">
-            ${Array.from({ length: 12 }, (_, index) => `<option value="${index + 1}">${index + 1}</option>`).join("")}
-          </select>
-        </div>
+
+      <div class="detail-image-container">
+        <img
+          class="detail-product-image"
+          src="${product.image}"
+          alt="${product.name}"
+        >
       </div>
+
+      <div class="detail-copy">
+
+        <p class="category">${product.category}</p>
+
+        <h1 id="product-name">
+          ${product.name}
+        </h1>
+
+        <p class="description">
+          ${product.description}
+        </p>
+
+        <div class="detail-meta">
+
+          <span class="price">
+            ${currency.format(product.price)}
+          </span>
+
+          ${availabilityMarkup(product.available)}
+
+        </div>
+
+        <div class="quantity-block">
+
+          <label for="quantity">
+            Quantity
+          </label>
+
+          <select
+            id="quantity"
+            class="form-select"
+            aria-label="Quantity"
+          >
+            ${Array.from(
+              { length: 12 },
+              (_, index) =>
+                `<option value="${index + 1}">${index + 1}</option>`
+            ).join("")}
+          </select>
+
+        </div>
+
+      </div>
+
     </article>
   `;
 }
 
 function renderFromUrl() {
-  const productId = new URLSearchParams(window.location.search).get("product");
-  productId ? showDetail(productId) : showCatalogue();
+  const productId = new URLSearchParams(
+    window.location.search
+  ).get("product");
+
+  if (productId) {
+    showDetail(productId);
+  } else {
+    showCatalogue();
+  }
 }
 
 document.addEventListener("click", (event) => {
-  const productLink = event.target.closest("[data-product-id]");
-  const backLink = event.target.closest("[data-back]");
+  const productLink = event.target.closest(
+    "[data-product-id]"
+  );
+
+  const backLink = event.target.closest(
+    "[data-back]"
+  );
 
   if (productLink) {
     event.preventDefault();
-    showDetail(productLink.dataset.productId, true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    showDetail(
+      productLink.dataset.productId,
+      true
+    );
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   if (backLink) {
     event.preventDefault();
-    history.pushState({}, "", window.location.pathname);
+
+    history.pushState(
+      {},
+      "",
+      window.location.pathname
+    );
+
     showCatalogue();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 });
 
-window.addEventListener("popstate", renderFromUrl);
+window.addEventListener(
+  "popstate",
+  renderFromUrl
+);
 
 fetch("data/products.json")
   .then((response) => {
-    if (!response.ok) throw new Error("Products could not be loaded.");
+    if (!response.ok) {
+      throw new Error(
+        "Products could not be loaded."
+      );
+    }
+
     return response.json();
   })
+
   .then((data) => {
-    products = data.filter((product) => product.bakery === "Morena");
+    products = data.filter(
+      (product) =>
+        product.bakery === "Morena"
+    );
+
     renderFromUrl();
   })
-  .catch(() => showCatalogue());
+
+  .catch((error) => {
+    console.error(
+      "Error loading products:",
+      error
+    );
+
+    showCatalogue();
+  });

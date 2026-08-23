@@ -80,7 +80,10 @@ function showCatalogue() {
                   data-product-id="${product.id}"
                 >
                   View details
-                  <span aria-hidden="true">→</span>
+                  <i
+                    class="bi bi-arrow-right"
+                    aria-hidden="true"
+                  ></i>
                 </a>
 
               </div>
@@ -184,8 +187,11 @@ function showDetail(productId, pushState = false) {
             id="order-link"
             href="${buildOrderUrl(product, 1)}"
           >
+            <i
+              class="bi bi-bag-heart"
+              aria-hidden="true"
+            ></i>
             Place an order
-            <span aria-hidden="true">→</span>
           </a>
         </div>
 

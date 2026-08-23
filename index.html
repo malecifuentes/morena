@@ -2,47 +2,160 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Browse Morena Bakery's product catalogue and pricing.">
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+      name="description"
+      content="Browse Morena Bakery's product catalogue and pricing."
+    >
+
     <title>Morena Bakery</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&amp;family=Libre+Baskerville:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
+
+    <link
+      rel="icon"
+      type="image/jpeg"
+      href="assets/images/logo-morena.jpg"
+    >
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    >
+
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    >
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&amp;family=Libre+Baskerville:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    >
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <link
+      href="styles.css"
+      rel="stylesheet"
+    >
   </head>
+
   <body>
+
     <header class="site-header">
       <div class="container page-width">
-        <a class="brand" href="./" aria-label="Morena Bakery catalogue">
-          <img src="assets/images/logo-morena.jpg" alt="Morena Bakery">
+
+        <a
+          class="brand"
+          href="./"
+          aria-label="Morena Bakery catalogue"
+        >
+          <img
+            src="assets/images/logo-morena.jpg"
+            alt="Morena Bakery"
+          >
         </a>
-        <a class="card-link" href="order.html">Place an order</a>
+
+        <a
+          class="card-link"
+          href="order.html"
+        >
+          <i
+            class="bi bi-bag-heart"
+            aria-hidden="true"
+          ></i>
+          Place an order
+        </a>
+
       </div>
     </header>
 
-    <main id="main-content" class="container page-width" tabindex="-1">
-      <section id="catalogue-view" aria-labelledby="catalogue-title">
+    <main
+      id="main-content"
+      class="container page-width"
+      tabindex="-1"
+    >
+
+      <section
+        id="catalogue-view"
+        aria-labelledby="catalogue-title"
+      >
+
         <div class="catalogue-hero">
-          <img src="assets/images/hero-morena.jpg" alt="Morena Bakery handcrafted cakes and pastries">
+          <img
+            src="assets/images/hero-morena.jpg"
+            alt="Morena Bakery handcrafted cakes and pastries"
+          >
         </div>
+
         <div class="intro">
-          <p class="eyebrow">Baked with care</p>
-          <h1 id="catalogue-title">Our catalogue</h1>
-          <p>Choose something special from our bakery.</p>
+          <p class="eyebrow">
+            Baked with care
+          </p>
+
+          <h1 id="catalogue-title">
+            Our catalogue
+          </h1>
+
+          <p>
+            Choose something special from our bakery.
+          </p>
         </div>
-        <div id="catalogue" class="row g-4" aria-live="polite"></div>
+
+        <div
+          id="catalogue"
+          class="row g-4"
+          aria-live="polite"
+        ></div>
+
       </section>
 
-      <section id="detail-view" class="d-none" aria-labelledby="product-name">
-        <a class="back-link" href="./" data-back aria-label="Back to product catalogue">
-          <span aria-hidden="true">←</span> Back to catalogue
+      <section
+        id="detail-view"
+        class="d-none"
+        aria-labelledby="product-name"
+      >
+
+        <a
+          class="back-link"
+          href="./"
+          data-back
+          aria-label="Back to product catalogue"
+        >
+          <i
+            class="bi bi-arrow-left"
+            aria-hidden="true"
+          ></i>
+          Back to catalogue
         </a>
-        <div id="product-detail" aria-live="polite"></div>
+
+        <div
+          id="product-detail"
+          aria-live="polite"
+        ></div>
+
       </section>
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
     <script src="app.js"></script>
+
   </body>
 </html>

@@ -3,12 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Place an order request with Morena Bakery.">
+
+    <meta
+      name="description"
+      content="Place an order request with Morena Bakery."
+    >
+
     <title>Place an Order — Morena Bakery</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&amp;family=Libre+Baskerville:wght@400;700&amp;display=swap" rel="stylesheet">
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&amp;family=Libre+Baskerville:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    >
+
     <link href="styles.css" rel="stylesheet">
+
     <style>
       .order-page {
         margin: 0 auto;
@@ -99,107 +111,338 @@
       }
     </style>
   </head>
+
   <body>
+
     <header class="site-header">
-      <div class="page-width" style="margin: 0 auto; padding: 0 1rem;">
-        <a class="brand" href="./" aria-label="Morena Bakery catalogue">
-          <img src="assets/images/logo-morena.jpg" alt="Morena Bakery">
+      <div
+        class="page-width"
+        style="margin: 0 auto; padding: 0 1rem;"
+      >
+        <a
+          class="brand"
+          href="./"
+          aria-label="Morena Bakery catalogue"
+        >
+          <img
+            src="assets/images/logo-morena.jpg"
+            alt="Morena Bakery"
+          >
         </a>
       </div>
     </header>
 
     <main class="order-page">
-      <a class="back-link" href="./"><span aria-hidden="true">←</span> Back to catalogue</a>
-      <p class="eyebrow" style="margin-top: 2.5rem;">Made especially for you</p>
-      <h1>Place an order</h1>
-      <p class="order-intro">Tell us what you would like and when you need it. We’ll contact you to confirm your order.</p>
 
-      <form id="order-form" class="order-form">
+      <a class="back-link" href="./">
+        <span aria-hidden="true">←</span>
+        Back to catalogue
+      </a>
+
+      <p
+        class="eyebrow"
+        style="margin-top: 2.5rem;"
+      >
+        Made especially for you
+      </p>
+
+      <h1>Place an order</h1>
+
+      <p class="order-intro">
+        Tell us what you would like and when you need it.
+        We’ll contact you to confirm your order.
+      </p>
+
+      <form
+        id="order-form"
+        class="order-form"
+      >
+
         <div class="form-field">
-          <label for="product">Product</label>
-          <select id="product" name="product" required>
-            <option value="">Choose a product</option>
-            <option value="Red Velvet Heart Cake">Red Velvet Heart Cake</option>
-            <option value="Box of 6 Cupcakes">Box of 6 Cupcakes</option>
-            <option value="Banana Bread">Banana Bread</option>
+          <label for="product">
+            Product
+          </label>
+
+          <select
+            id="product"
+            name="product"
+            required
+          >
+            <option value="">
+              Choose a product
+            </option>
+
+            <option value="Red Velvet Heart Cake">
+              Red Velvet Heart Cake
+            </option>
+
+            <option value="Box of 6 Cupcakes">
+              Box of 6 Cupcakes
+            </option>
+
+            <option value="Banana Bread">
+              Banana Bread
+            </option>
           </select>
         </div>
 
         <div class="form-field">
-          <label for="quantity">Quantity</label>
-          <input id="quantity" name="quantity" type="number" min="1" step="1" value="1" required>
+          <label for="quantity">
+            Quantity
+          </label>
+
+          <input
+            id="quantity"
+            name="quantity"
+            type="number"
+            min="1"
+            max="12"
+            step="1"
+            value="1"
+            required
+          >
         </div>
 
         <div class="form-field">
-          <label for="customer_name">Customer name</label>
-          <input id="customer_name" name="customer_name" type="text" autocomplete="name" required>
+          <label for="customer_name">
+            Customer name
+          </label>
+
+          <input
+            id="customer_name"
+            name="customer_name"
+            type="text"
+            autocomplete="name"
+            required
+          >
         </div>
 
         <div class="form-field">
-          <label for="phone">Phone</label>
-          <input id="phone" name="phone" type="tel" autocomplete="tel" required>
+          <label for="phone">
+            Phone
+          </label>
+
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            required
+          >
         </div>
 
         <div class="form-field">
-          <label for="delivery_date">Delivery date</label>
-          <input id="delivery_date" name="delivery_date" type="date" required>
+          <label for="delivery_date">
+            Delivery date
+          </label>
+
+          <input
+            id="delivery_date"
+            name="delivery_date"
+            type="date"
+            required
+          >
         </div>
 
-        <button id="submit-button" class="submit-button" type="submit">Send order request</button>
-        <p id="form-message" class="form-message" role="status" aria-live="polite" hidden></p>
+        <button
+          id="submit-button"
+          class="submit-button"
+          type="submit"
+        >
+          Send order request
+        </button>
+
+        <p
+          id="form-message"
+          class="form-message"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></p>
+
       </form>
+
     </main>
 
     <script type="module">
-      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+      import {
+        createClient
+      } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
       const supabase = createClient(
         "https://ospxdofouvetwkzoztfs.supabase.co",
         "sb_publishable_Iqf8v_JgG9HYr6z7ZAANpw_1EA5W_y9"
       );
 
-      const form = document.querySelector("#order-form");
-      const submitButton = document.querySelector("#submit-button");
-      const message = document.querySelector("#form-message");
-      const deliveryDate = document.querySelector("#delivery_date");
+      const form =
+        document.querySelector("#order-form");
 
-      deliveryDate.min = new Date().toLocaleDateString("en-CA");
+      const submitButton =
+        document.querySelector("#submit-button");
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        submitButton.disabled = true;
-        submitButton.textContent = "Sending…";
-        message.hidden = true;
-        message.className = "form-message";
+      const message =
+        document.querySelector("#form-message");
 
-        const formData = new FormData(form);
-        const orderRequest = {
-          product: formData.get("product"),
-          quantity: Number(formData.get("quantity")),
-          customer_name: formData.get("customer_name"),
-          phone: formData.get("phone"),
-          delivery_date: formData.get("delivery_date"),
-        };
+      const productField =
+        document.querySelector("#product");
 
-        const { error } = await supabase
-          .from("order_requests")
-          .insert(orderRequest);
+      const quantityField =
+        document.querySelector("#quantity");
 
-        message.hidden = false;
+      const deliveryDate =
+        document.querySelector("#delivery_date");
 
-        if (error) {
-          message.classList.add("error");
-          message.textContent = `Your order could not be saved: ${error.message}`;
-          submitButton.disabled = false;
-          submitButton.textContent = "Send order request";
-          return;
+
+      /*
+        Read the product and quantity selected
+        on the product detail screen.
+      */
+
+      const params =
+        new URLSearchParams(window.location.search);
+
+      const selectedProduct =
+        params.get("product");
+
+      const selectedQuantity =
+        Number(params.get("quantity"));
+
+
+      /*
+        Prefill the product only when it matches
+        one of the available options.
+      */
+
+      if (selectedProduct) {
+        const productExists =
+          Array.from(productField.options).some(
+            (option) =>
+              option.value === selectedProduct
+          );
+
+        if (productExists) {
+          productField.value =
+            selectedProduct;
         }
+      }
 
-        form.reset();
-        message.classList.add("success");
-        message.textContent = "Thank you! Your order request has been saved.";
-        submitButton.textContent = "Order request sent";
-      });
+
+      /*
+        Prefill quantity when the value coming
+        from the detail screen is valid.
+      */
+
+      if (
+        Number.isInteger(selectedQuantity) &&
+        selectedQuantity >= 1 &&
+        selectedQuantity <= 12
+      ) {
+        quantityField.value =
+          selectedQuantity;
+      }
+
+
+      /*
+        Only future dates can be selected.
+      */
+
+      const tomorrow = new Date();
+
+      tomorrow.setDate(
+        tomorrow.getDate() + 1
+      );
+
+      deliveryDate.min =
+        tomorrow.toLocaleDateString("en-CA");
+
+
+      /*
+        Submit the order request to Supabase.
+      */
+
+      form.addEventListener(
+        "submit",
+        async (event) => {
+
+          event.preventDefault();
+
+          submitButton.disabled = true;
+          submitButton.textContent =
+            "Sending…";
+
+          message.hidden = true;
+          message.className =
+            "form-message";
+
+          const formData =
+            new FormData(form);
+
+          const orderRequest = {
+            product:
+              formData.get("product"),
+
+            quantity:
+              Number(
+                formData.get("quantity")
+              ),
+
+            customer_name:
+              formData.get(
+                "customer_name"
+              ),
+
+            phone:
+              formData.get("phone"),
+
+            delivery_date:
+              formData.get(
+                "delivery_date"
+              ),
+          };
+
+
+          const { error } =
+            await supabase
+              .from("order_requests")
+              .insert(orderRequest);
+
+
+          message.hidden = false;
+
+
+          if (error) {
+
+            message.classList.add(
+              "error"
+            );
+
+            message.textContent =
+              `Your order could not be saved: ${error.message}`;
+
+            submitButton.disabled =
+              false;
+
+            submitButton.textContent =
+              "Send order request";
+
+            return;
+          }
+
+
+          message.classList.add(
+            "success"
+          );
+
+          message.textContent =
+            "Thank you! Your order request has been saved.";
+
+          submitButton.textContent =
+            "Order request sent";
+        }
+      );
+
     </script>
+
   </body>
 </html>

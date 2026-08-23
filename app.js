@@ -20,6 +20,15 @@ function availabilityMarkup(available) {
   return `<span class="${className}">${status}</span>`;
 }
 
+function buildOrderUrl(product, quantity = 1) {
+  const params = new URLSearchParams({
+    product: product.name,
+    quantity: quantity,
+  });
+
+  return `order.html?${params.toString()}`;
+}
+
 function showCatalogue() {
   history.replaceState({}, "", window.location.pathname);
   document.title = "Morena Bakery — Product Catalogue";
@@ -158,6 +167,7 @@ function showDetail(productId, pushState = false) {
             id="quantity"
             class="form-select"
             aria-label="Quantity"
+            data-product-name="${product.name}"
           >
             ${Array.from(
               { length: 12 },
@@ -166,6 +176,17 @@ function showDetail(productId, pushState = false) {
             ).join("")}
           </select>
 
+        </div>
+
+        <div class="mt-4">
+          <a
+            class="card-link"
+            id="order-link"
+            href="${buildOrderUrl(product, 1)}"
+          >
+            Place an order
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
 
       </div>
@@ -185,6 +206,31 @@ function renderFromUrl() {
     showCatalogue();
   }
 }
+
+document.addEventListener("change", (event) => {
+  if (event.target.id !== "quantity") {
+    return;
+  }
+
+  const quantity = event.target.value;
+
+  const productId = new URLSearchParams(
+    window.location.search
+  ).get("product");
+
+  const product = products.find(
+    (item) => item.id === Number(productId)
+  );
+
+  const orderLink = document.querySelector("#order-link");
+
+  if (product && orderLink) {
+    orderLink.href = buildOrderUrl(
+      product,
+      quantity
+    );
+  }
+});
 
 document.addEventListener("click", (event) => {
   const productLink = event.target.closest(

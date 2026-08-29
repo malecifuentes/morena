@@ -278,16 +278,7 @@
 
     </main>
 
-    <script type="module">
-
-      import {
-        createClient
-      } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-      const supabase = createClient(
-        "https://ospxdofouvetwkzoztfs.supabase.co",
-        "sb_publishable_Iqf8v_JgG9HYr6z7ZAANpw_1EA5W_y9"
-      );
+    <script>
 
       const form =
         document.querySelector("#order-form");
@@ -387,10 +378,47 @@
               ),
           };
 
-          const { error } =
-            await supabase
-              .from("order_requests")
-              .insert(orderRequest);
+          let error = null;
+
+          try {
+            const apiResponse = await fetch(
+              "/api/order-request",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(
+                  orderRequest
+                ),
+              }
+            );
+
+            const result =
+              await apiResponse.json();
+
+            if (!apiResponse.ok) {
+              const details =
+                result.error;
+
+              error = {
+                message:
+                  typeof details === "string"
+                    ? details
+                    : details?.message ||
+                      JSON.stringify(
+                        details
+                      ),
+              };
+            }
+          } catch (requestError) {
+            error = {
+              message:
+                requestError instanceof Error
+                  ? requestError.message
+                  : String(requestError),
+            };
+          }
 
           message.hidden = false;
 

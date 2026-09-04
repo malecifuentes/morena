@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+      name="description"
+      content="Check the status of your Morena Bakery order."
+    >
+
+    <title>Check Order Status — Morena Bakery</title>
+
+    <link
+      rel="icon"
+      type="image/jpeg"
+      href="assets/images/logo-morena.jpg"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&amp;family=Libre+Baskerville:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    >
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <link href="styles.css" rel="stylesheet">
+
+    <style>
+      .status-page {
+        margin: 0 auto;
+        max-width: 720px;
+        padding: clamp(2.5rem, 7vw, 5rem) 1rem;
+      }
+
+      .status-page h1 {
+        font-size: clamp(2.25rem, 6vw, 4rem);
+      }
+
+      .status-intro {
+        color: var(--morena-muted);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 1rem 0 2.5rem;
+      }
+
+      .status-card {
+        border: 1px solid var(--morena-line);
+        background: rgba(255, 255, 255, 0.38);
+        padding: clamp(1.5rem, 5vw, 3rem);
+      }
+
+      .form-field label {
+        color: var(--morena-primary);
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-field input {
+        background: white;
+        border: 1px solid var(--morena-line);
+        border-radius: 0;
+        box-sizing: border-box;
+        color: var(--morena-ink);
+        font: inherit;
+        padding: 0.8rem 0.9rem;
+        width: 100%;
+      }
+
+      .form-field input:focus {
+        border-color: var(--morena-accent);
+        box-shadow: 0 0 0 0.2rem rgba(200, 155, 109, 0.25);
+        outline: none;
+      }
+
+      .status-button {
+        background: var(--morena-primary);
+        border: 0;
+        color: white;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        padding: 0.9rem 1.5rem;
+      }
+
+      .status-button:hover {
+        background: var(--morena-accent);
+      }
+
+      .status-button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+
+      .status-message {
+        margin-top: 1.5rem;
+        padding: 1rem;
+      }
+
+      .status-message.success {
+        border: 1px solid var(--morena-accent);
+        color: var(--morena-primary);
+      }
+
+      .status-message.error {
+        border: 1px solid #a32929;
+        color: #8a1f1f;
+      }
+
+      .status-code {
+        display: block;
+        font-family: "Libre Baskerville", serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+
+      .status-details {
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <header class="site-header">
+      <div
+        class="page-width"
+        style="margin: 0 auto; padding: 0 1rem;"
+      >
+        <a
+          class="brand"
+          href="./"
+          aria-label="Morena Bakery catalogue"
+        >
+          <img
+            src="assets/images/logo-morena.jpg"
+            alt="Morena Bakery"
+          >
+        </a>
+      </div>
+    </header>
+
+    <main class="status-page">
+
+      <a class="back-link" href="./">
+        <i
+          class="bi bi-arrow-left"
+          aria-hidden="true"
+        ></i>
+        Back to catalogue
+      </a>
+
+      <p
+        class="eyebrow"
+        style="margin-top: 2.5rem;"
+      >
+        Order tracking
+      </p>
+
+      <h1>Check order status</h1>
+
+      <p class="status-intro">
+        Enter your order number to see the latest status of your request.
+      </p>
+
+      <section class="status-card">
+
+        <form id="status-form">
+
+          <div class="form-field">
+            <label for="order_code">
+              Order number
+            </label>
+
+            <input
+              id="order_code"
+              name="order_code"
+              type="text"
+              placeholder="Example: MB-13"
+              maxlength="20"
+              required
+            >
+          </div>
+
+          <button
+            id="status-button"
+            class="status-button"
+            type="submit"
+          >
+            Check status
+          </button>
+
+          <div
+            id="status-message"
+            class="status-message"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></div>
+
+        </form>
+
+      </section>
+
+    </main>
+
+    <script>
+
+      const form =
+        document.querySelector("#status-form");
+
+      const orderCodeField =
+        document.querySelector("#order_code");
+
+      const statusButton =
+        document.querySelector("#status-button");
+
+      const statusMessage =
+        document.querySelector("#status-message");
+
+      const params =
+        new URLSearchParams(window.location.search);
+
+      const codeFromUrl =
+        params.get("order_code");
+
+      if (codeFromUrl) {
+        orderCodeField.value =
+          codeFromUrl.toUpperCase();
+      }
+
+      form.addEventListener(
+        "submit",
+        async (event) => {
+
+          event.preventDefault();
+
+          const orderCode =
+            orderCodeField.value
+              .trim()
+              .toUpperCase();
+
+          if (!orderCode) {
+            return;
+          }
+
+          statusButton.disabled = true;
+          statusButton.textContent =
+            "Checking…";
+
+          statusMessage.hidden = true;
+          statusMessage.className =
+            "status-message";
+
+          try {
+
+            const apiResponse =
+              await fetch(
+                `/api/order-status?order_code=${encodeURIComponent(orderCode)}`
+              );
+
+            const result =
+              await apiResponse.json();
+
+            statusMessage.hidden = false;
+
+            if (!apiResponse.ok) {
+
+              statusMessage.classList.add(
+                "error"
+              );
+
+              if (apiResponse.status === 404) {
+                statusMessage.textContent =
+                  "We couldn't find an order with that number.";
+              } else {
+                statusMessage.textContent =
+                  result.error?.message ||
+                  result.error ||
+                  "We couldn't check your order right now.";
+              }
+
+              return;
+            }
+
+            const order =
+              result.order;
+
+            statusMessage.classList.add(
+              "success"
+            );
+
+            statusMessage.innerHTML = `
+              <span class="status-code">
+                Order ${order.order_code}
+              </span>
+
+              <div class="status-details">
+                <strong>Status:</strong>
+                ${order.status}
+                <br>
+
+                <strong>Products:</strong>
+                ${order.product}
+                <br>
+
+                <strong>Quantity:</strong>
+                ${order.quantity}
+                <br>
+
+                <strong>Delivery date:</strong>
+                ${order.delivery_date}
+              </div>
+            `;
+
+          } catch (error) {
+
+            statusMessage.hidden = false;
+
+            statusMessage.classList.add(
+              "error"
+            );
+
+            statusMessage.textContent =
+              "We couldn't connect to the order service.";
+
+          } finally {
+
+            statusButton.disabled = false;
+
+            statusButton.textContent =
+              "Check status";
+          }
+        }
+      );
+
+    </script>
+
+  </body>
+</html>

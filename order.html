@@ -47,7 +47,21 @@
         color: var(--morena-muted);
         font-size: 1.1rem;
         line-height: 1.6;
-        margin: 1rem 0 2.5rem;
+        margin: 1rem 0 1.25rem;
+      }
+
+      .existing-order-link {
+        align-items: center;
+        color: var(--morena-primary);
+        display: inline-flex;
+        font-weight: 700;
+        gap: 0.45rem;
+        margin-bottom: 2.5rem;
+        text-decoration: none;
+      }
+
+      .existing-order-link:hover {
+        color: var(--morena-accent);
       }
 
       .cart-box,
@@ -213,6 +227,20 @@
         margin-top: 0.75rem;
       }
 
+      .status-link {
+        background: var(--morena-primary);
+        color: white;
+        display: inline-block;
+        font-weight: 700;
+        margin-top: 1.25rem;
+        padding: 0.85rem 1.25rem;
+        text-decoration: none;
+      }
+
+      .status-link:hover {
+        background: var(--morena-accent);
+      }
+
       @media (max-width: 560px) {
         .add-product-row {
           grid-template-columns: 1fr;
@@ -268,6 +296,17 @@
         Add one or more products to your order and tell us
         when you need them. We’ll contact you to confirm your request.
       </p>
+
+      <a
+        class="existing-order-link"
+        href="order-status.html"
+      >
+        <i
+          class="bi bi-search"
+          aria-hidden="true"
+        ></i>
+        Already placed an order? Check its status
+      </a>
 
       <section class="cart-box">
 
@@ -401,13 +440,13 @@
           Send order request
         </button>
 
-        <p
+        <div
           id="form-message"
           class="form-message"
           role="status"
           aria-live="polite"
           hidden
-        ></p>
+        ></div>
 
       </form>
 
@@ -567,6 +606,7 @@
           alert(
             "Quantity must be between 1 and 12."
           );
+
           return;
         }
 
@@ -814,6 +854,19 @@
 
             Please save your order number.
             You will use it to check your order status.
+
+            <br>
+
+            <a
+              class="status-link"
+              href="order-status.html?order_code=${encodeURIComponent(orderCode)}"
+            >
+              <i
+                class="bi bi-search"
+                aria-hidden="true"
+              ></i>
+              Check Order Status
+            </a>
           `;
 
           submitButton.textContent =

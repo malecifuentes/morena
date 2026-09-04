@@ -168,11 +168,11 @@ The serverless order function:
 1. Accepts only the supported request method.
 2. Validates required fields.
 3. Reads the Supabase service credential from a server-side environment variable.
-4. Sends the transaction to Supabase.
-5. Receives the newly created database record.
-6. Creates a customer-facing order number using the database ID.
-7. Persists the order number with the transaction.
-8. Returns the successful transaction information to the frontend.
+4. Creates the transaction in Supabase.
+5. Receives the newly generated database ID.
+6. Creates a customer-facing order number using that ID.
+7. Updates the transaction with the generated order number.
+8. Returns the completed transaction information to the frontend.
 
 ### Outputs
 
@@ -241,6 +241,25 @@ The function uses:
 
 This value is stored as a deployment environment variable and is not exposed to the frontend.
 
+### Transaction Sequence
+
+The transaction is created in two persistence steps:
+
+1. The order request is inserted into Supabase.
+2. Supabase generates and returns the transaction `id`.
+3. The backend creates an order number in the format `MB-ID`.
+4. The backend updates the same transaction with that `order_code`.
+
+Example:
+
+Database ID:
+
+`15`
+
+Customer-facing order number:
+
+`MB-15`
+
 ### Successful Response
 
 The backend returns transaction information including:
@@ -258,7 +277,7 @@ The backend returns transaction information including:
 
 ## Successful Submission Confirmation
 
-After the transaction is stored successfully, the customer receives a confirmation on the order page.
+After the transaction is stored successfully and its order number has been persisted, the customer receives a confirmation on the order page.
 
 The confirmation includes:
 
@@ -273,7 +292,7 @@ The unique order number follows this format:
 
 Example:
 
-`MB-13`
+`MB-15`
 
 New order requests initially use:
 
@@ -297,7 +316,7 @@ A successfully submitted request is recorded but is not automatically considered
 
 The customer enters an order number such as:
 
-`MB-13`
+`MB-15`
 
 and requests the current order information.
 
@@ -338,7 +357,7 @@ The interface displays a clear message indicating that the order could not be fo
 
 ### URL Prefill
 
-When the customer reaches Check Order Status from a successful order confirmation, the order number may be supplied through the page URL and prefilled into the order number field.
+When the customer reaches Check Order Status from a successful order confirmation, the order number can be supplied through the page URL and prefilled into the order number field.
 
 ---
 
@@ -415,7 +434,7 @@ using a `POST` request.
 
 - Customer message displayed in the conversation
 - Grounded Morena Bakery assistant response
-- Connection/error feedback when the assistant cannot respond
+- Connection or error feedback when the assistant cannot respond
 
 ---
 
@@ -513,11 +532,14 @@ Order requests are stored in the Supabase table:
 The implemented transaction table includes:
 
 - Primary key on `id`
-- Required transaction fields
+- Required core transaction fields
 - Unique `order_code`
-- Required `order_code`
 - Default `Pending` status
 - Controlled valid status values
+
+The `order_code` field remains nullable during the initial database insert because the backend requires the generated database ID before it can construct the customer-facing order number.
+
+Immediately after the ID is returned, the backend generates and persists the `MB-ID` order code in the same transaction record.
 
 ### Supported Status Values
 
@@ -552,7 +574,7 @@ The public order-status endpoint must not return customer name or phone number.
 
 ### Core Transaction
 
-**Product Catalogue → Product Details / Product Selection → Multi-Product Order → Submit Order → Serverless Backend → Supabase → Order Number + Pending Status → Confirmation**
+**Product Catalogue → Product Details / Product Selection → Multi-Product Order → Submit Order → Serverless Backend → Supabase → Database ID → Order Number → Pending Status → Confirmation**
 
 ### Order Read-Back
 
@@ -568,18 +590,42 @@ The public order-status endpoint must not return customer name or phone number.
 
 ---
 
-## Validated Delivery 4 Scenarios
+## Delivery 4 Final Validation
 
-The implemented product has been tested for:
+The deployed Morena Bakery product has been validated using a final test transaction.
+
+### Final Test Order
+
+Order number:
+
+`MB-15`
+
+Status:
+
+`Pending`
+
+Products:
+
+- 1x Banana Bread
+- 1x Red Velvet Heart Cake
+
+Requested delivery date:
+
+`2026-09-05`
+
+The final validation confirmed:
 
 - Successful multi-product order creation
 - Persistent Supabase transaction storage
 - Unique order number generation
 - Initial `Pending` status
-- Successful order lookup by order number
-- Clear not-found behavior for a nonexistent order number
-- Grounded chatbot response using known Morena Bakery information
-- Chatbot refusal to invent unavailable product information
+- Successful order lookup using `MB-15`
+- Correct product and quantity read-back
+- Correct requested delivery date read-back
+- Clear not-found behavior using `MB-99999`
+- Public status response without customer name or phone
+- Grounded chatbot responses using Morena Bakery information
+- Chatbot refusal to invent unavailable information
 - Chatbot guidance for the customer ordering process
 - Chatbot redirection to Check Order Status for individual order questions
 

@@ -79,6 +79,8 @@ The application uses serverless API functions deployed with Vercel.
 
 Accepts the customer order request and writes the transaction to Supabase.
 
+The transaction is first created in the database so that Supabase can return its database ID. The backend then generates the customer-facing order number using that ID and persists the resulting `MB-XX` order code with the transaction.
+
 ### Order Status
 
 `/api/order-status`
@@ -113,7 +115,9 @@ The transaction records include:
 - `status`
 - `order_code`
 
-The database includes constraints for required fields, a primary key, a unique and required order code, and controlled status values.
+The database includes constraints for required transaction fields, a primary key, a unique order code and controlled status values.
+
+The `order_code` field is unique. During order creation, the transaction is first inserted so that the database can generate its ID. The serverless backend then uses that ID to create and persist the customer-facing `MB-XX` order number.
 
 New order requests use `Pending` as their initial status.
 
@@ -135,7 +139,7 @@ The application uses deployment environment variables for:
 
 These secret keys are accessed only by server-side functions and are not exposed in the browser code.
 
-The public order status endpoint also limits the information returned and does not expose the customer's name or phone number.
+The public order status endpoint limits the information returned and does not expose the customer's name or phone number.
 
 ## Currently Working
 
@@ -174,7 +178,7 @@ After a successful submission, the transaction is stored in Supabase and the cus
 
 ### Check Order Status
 
-Customers can enter an order number such as `MB-13` to retrieve the current status and non-sensitive order information.
+Customers can enter an order number such as `MB-15` to retrieve the current status and non-sensitive order information.
 
 An invalid or nonexistent order number produces a clear not-found response.
 
@@ -245,13 +249,33 @@ The live product has been tested for the following flows:
 
 1. A customer can create a multi-product order.
 2. The transaction is persisted in Supabase.
-3. A unique `MB-XX` order number is generated.
+3. A unique `MB-XX` order number is generated and persisted after the database ID is created.
 4. The new transaction receives the status `Pending`.
 5. A valid order number can be retrieved through Check Order Status.
 6. A nonexistent order number returns a clear not-found response.
-7. The grounded chatbot answers questions based on Morena Bakery information.
-8. The chatbot declines to invent information that is not included in its provided context.
-9. The chatbot directs customers to Check Order Status instead of claiming access to individual orders.
+7. The public status result returns non-sensitive order information without exposing the customer's name or phone number.
+8. The grounded chatbot answers questions based on Morena Bakery information.
+9. The chatbot declines to invent information that is not included in its provided context.
+10. The chatbot directs customers to Check Order Status instead of claiming access to individual orders.
+
+### Final Transaction Validation
+
+A final Delivery 4 transaction was successfully completed using the deployed product.
+
+Validated order:
+
+`MB-15`
+
+The transaction was:
+
+- Created through the public Morena Bakery website
+- Processed through the project's serverless backend
+- Persisted in the `order_requests` Supabase table
+- Assigned the status `Pending`
+- Assigned the unique order number `MB-15`
+- Successfully retrieved through Check Order Status
+
+The final validation also confirmed clear not-found behavior using a nonexistent order number.
 
 ## Future Development
 

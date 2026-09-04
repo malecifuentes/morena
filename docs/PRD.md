@@ -6,7 +6,7 @@ Multi-Bakery Subscription Platform — Morena Bakery Pilot
 
 ## Current Version
 
-Delivery 4 — Core Transaction, Order Status and Grounded AI Chatbot
+Delivery 4 — Working Product with Persistent Transaction, Order Read-Back and Grounded AI Chatbot
 
 ## Overview
 
@@ -16,171 +16,245 @@ The long-term product vision is to allow multiple bakeries to operate their own 
 
 The current implementation focuses on Morena Bakery as the pilot. The Morena Bakery pilot is used to build and validate the customer ordering experience before expanding the platform to additional bakery tenants.
 
-For Delivery 4, the pilot includes a complete customer order transaction, persistent database storage, unique order identification, order status retrieval and a grounded AI customer assistant.
+For Delivery 4, the pilot includes a complete customer transaction, persistent Supabase storage, a customer-facing order number, order status read-back and a grounded AI chatbot.
+
+---
 
 ## Problem
 
 Many small bakeries receive orders manually through WhatsApp, Instagram or other social media channels.
 
-Customers may need to exchange several messages to ask about available products, prices, quantities, delivery dates and the status of an existing request.
+Customers may need to exchange several messages to ask about:
 
-This process can lead to delayed responses, incomplete order information and difficulties organising and following up on customer requests.
+- Available products
+- Prices
+- Quantities
+- Requested delivery dates
+- Order information
+- Current order status
+
+This process can make customer requests difficult to organise and may lead to delayed responses or incomplete order information.
+
+The business also lacks a structured transaction record when customer requests exist only inside social media conversations.
+
+---
 
 ## Target Users
 
 ### Primary User: Small Bakery Owners
 
-The primary users are owners of small bakeries and dessert businesses that currently receive customer enquiries and order requests manually through WhatsApp, Instagram or other social media channels.
+The primary users are owners of small bakeries and dessert businesses that currently receive customer enquiries and order requests manually.
 
-They need a simple digital storefront where customers can view products and submit structured order requests that are stored persistently.
+They need a structured way to:
 
-For the current implementation, Morena Bakery represents this primary user.
+- Present products
+- Receive complete customer order requests
+- Store transaction information
+- Identify orders
+- Maintain order status information
+- Reduce repetitive customer-service questions
 
 ### Secondary User: Bakery Customers
 
-The secondary users are customers who want to browse available products, create an order request, receive an order number, check the status of an existing request and obtain basic assistance without exchanging multiple messages with the bakery.
+Customers need a simple way to:
 
-They need a clear and simple experience that allows them to provide the information necessary for the bakery to follow up on their request.
+- Browse products
+- View product information
+- Select quantities
+- Request multiple products in one order
+- Submit contact and delivery information
+- Receive an order number
+- Check an existing order
+- Ask basic questions about the bakery and ordering process
 
-## Goal
+---
 
-The goal of the current Morena Bakery pilot is to provide a functional customer experience where customers can:
+## Product Goal
 
-- Browse available products.
-- View product details, prices and availability.
-- Add one or more products to an order.
-- Select quantities.
-- Submit an online order request.
-- Receive a unique order number.
-- See the initial status of the order request.
-- Retrieve an existing order using its order number.
-- Receive a clear response when an order number does not exist.
-- Ask a grounded AI assistant questions about Morena Bakery and its ordering process.
+The goal of the Morena Bakery pilot is to validate a simple digital ordering experience that converts a customer request into a persistent and retrievable transaction.
 
-The broader product goal is to use the Morena Bakery pilot as the foundation for a future subscription platform serving multiple independent bakeries.
+A successful Delivery 4 transaction must:
+
+1. Start from the deployed Morena Bakery product.
+2. Allow the customer to select one or more products.
+3. Collect the required customer and delivery information.
+4. Pass through the project's own serverless backend.
+5. Persist the transaction in Supabase.
+6. Receive a database ID.
+7. Receive a unique customer-facing order number.
+8. Store an initial order status.
+9. Return a successful confirmation to the customer.
+10. Allow the transaction to be retrieved later using its order number.
+
+The product also includes a grounded AI chatbot that answers Morena Bakery-related questions through the project's own backend.
+
+---
 
 ## Core Customer Transaction
 
-The core transaction for Delivery 4 is the submission of a customer order request.
+The core transaction is an order request.
 
-The transaction begins when the customer selects one or more Morena Bakery products and ends when the order request is persisted in the database and the customer receives a unique order number and initial status.
-
-### Transaction Inputs
+### Customer Inputs
 
 The customer provides:
 
 - One or more products
-- Quantity for each selected product
+- Quantity for each product
 - Customer name
 - Phone number
 - Requested delivery date
 
-### Transaction Processing
+### Transaction Process
 
-When the customer submits the order:
+The application:
 
-1. The browser sends the transaction to the project's own serverless backend function.
-2. The backend validates the required transaction data.
-3. The backend uses a server-side Supabase credential.
-4. The transaction is inserted into the `order_requests` table.
-5. Supabase generates the transaction ID.
-6. The application creates a unique customer-facing order number using the `MB-XX` format.
-7. The order number is persisted with the transaction.
-8. The new order receives the initial status `Pending`.
-9. The backend returns the successful transaction information to the customer interface.
+1. Collects the selected products and quantities.
+2. Collects the customer information.
+3. Sends the transaction to `/api/order-request`.
+4. Validates the required transaction fields.
+5. Uses the server-side Supabase credential.
+6. Inserts the transaction into `order_requests`.
+7. Receives the database-generated transaction ID.
+8. Generates an order number in the format `MB-ID`.
+9. Updates the transaction with the generated order number.
+10. Returns the completed transaction to the customer.
 
 ### Transaction Output
 
-After a successful submission, the customer receives:
+After successful submission, the customer receives:
 
-- Successful submission confirmation
+- Successful order request confirmation
 - Unique order number
 - Initial order status
+- Access to Check Order Status
 
-## Current MVP Features
+---
 
-- Product catalogue
-- Product images
-- Product details and descriptions
-- Product prices
-- Product availability
-- Multi-product shopping cart
-- Quantity controls
-- Customer order request form
-- Serverless order submission
-- Supabase transaction storage
-- Unique `MB-XX` order number
-- Initial `Pending` status
-- Successful transaction confirmation
-- Check Order Status feature
-- Order retrieval by order number
-- Not-found handling for nonexistent order numbers
-- Grounded AI chatbot
-- Server-side AI API integration
-- Navigation between the implemented customer experiences
+## Order Number
 
-## User Stories
+Every successfully completed order request receives a customer-facing order number.
 
-- As a customer, I want to browse Morena Bakery products so that I can decide what I would like to order.
+Format:
 
-- As a customer, I want to see product details, prices and availability before creating an order request.
+`MB-ID`
 
-- As a customer, I want to add more than one product to the same order so that I can submit one complete request.
+Example:
 
-- As a customer, I want to adjust the quantity of each selected product so that my request reflects what I need.
+`MB-15`
 
-- As a customer, I want to provide my name, phone number and requested delivery date so that Morena Bakery has the information needed to follow up on my request.
+The number is generated by the serverless backend after Supabase returns the database transaction ID.
 
-- As a customer, I want to receive a unique order number after submitting my request so that I can identify it later.
+The `order_code` field is unique in the database.
 
-- As a customer, I want to see the initial status of my request so that I know it was recorded.
+Because the database ID is required to construct the order number, `order_code` may be temporarily null during the initial insert. The backend immediately updates the same transaction with the generated order number before returning a successful transaction response to the customer.
 
-- As a customer, I want to retrieve my order using its order number so that I can check its current status.
-
-- As a customer, I want to receive a clear message when an order number does not exist so that I know the lookup was unsuccessful.
-
-- As a customer, I want to ask Morena Bakery's AI assistant basic questions about the products and ordering process so that I can receive immediate guidance.
-
-- As a customer, I want the AI assistant to avoid inventing unavailable information so that I receive reliable guidance.
-
-- As a bakery owner, I want customer order requests to be stored in a structured and persistent format so that they can be reviewed after submission.
-
-- As a bakery owner, I want sensitive service credentials to remain on the server side so that they are not exposed in public frontend code.
-
-## Current Customer Flow
-
-The primary Morena Bakery transaction flow is:
-
-**Product Catalogue → Product Selection → Shopping Cart → Customer Information → Submit Order → Serverless Backend → Supabase → Order Number and Pending Status → Confirmation**
-
-The post-transaction read-back flow is:
-
-**Order Number → Check Order Status → Serverless Backend → Supabase → Order Details and Current Status**
-
-If the supplied order number does not exist:
-
-**Order Number → Check Order Status → Not Found Message**
-
-The customer assistance flow is:
-
-**Customer Question → Ask Morena Bakery → Serverless Chat Backend → Grounded AI Response**
+---
 
 ## Order Status
 
-Every new order request begins with the status:
+New order requests are stored with the initial status:
 
 `Pending`
 
-The database supports the following controlled status values:
+Supported database status values are:
 
 - `Pending`
 - `Confirmed`
 - `Completed`
 - `Cancelled`
 
-The public Check Order Status experience displays only the non-sensitive information required for customer tracking.
+Delivery 4 does not require an administrative interface for changing order status.
 
-The customer's name and phone number are not returned by the public order status endpoint.
+The current product demonstrates that the status is persisted with the transaction and can be read back through the customer-facing status experience.
+
+---
+
+## Current MVP Features
+
+The implemented Morena Bakery pilot includes:
+
+- Product catalogue
+- Product images
+- Product categories
+- Product descriptions
+- Product prices
+- Product availability
+- Product detail experience
+- Quantity selection
+- Multi-product order request
+- Shopping-cart controls
+- Customer information collection
+- Requested delivery date
+- Serverless order creation
+- Persistent Supabase transaction storage
+- Unique order number
+- Initial order status
+- Successful transaction confirmation
+- Order status lookup
+- Not-found handling
+- Grounded AI chatbot
+- Server-side AI integration
+- Public deployment
+
+---
+
+## User Stories
+
+### Product Discovery
+
+As a customer, I want to browse Morena Bakery products so that I can see what is available.
+
+As a customer, I want to view product details so that I can understand the product before ordering.
+
+### Multi-Product Ordering
+
+As a customer, I want to add more than one product to the same request so that I do not need to submit separate orders.
+
+As a customer, I want to adjust quantities so that the request reflects what I want to order.
+
+### Transaction Submission
+
+As a customer, I want to enter my contact information and requested delivery date so that Morena Bakery receives the information required for my request.
+
+As a customer, I want a clear success message only after my transaction has been stored successfully.
+
+### Order Identification
+
+As a customer, I want to receive an order number so that I can identify my request later.
+
+### Order Read-Back
+
+As a customer, I want to enter my order number and retrieve my current order information.
+
+As a customer, I want a clear message if the order number I enter does not exist.
+
+### Customer Assistance
+
+As a customer, I want to ask Morena Bakery questions through the website so that I can understand the ordering process.
+
+As a customer, I want the assistant to avoid inventing information that Morena Bakery has not provided.
+
+---
+
+## Product Flow
+
+### Main Transaction
+
+**Product Catalogue → Product Selection → Multi-Product Order → Customer Information → Submit → Serverless Backend → Supabase → Database ID → Order Number → Pending Status → Confirmation**
+
+### Order Read-Back
+
+**Order Confirmation / Check Order Status → Order Number → Serverless Backend → Supabase → Order Information + Status**
+
+### Invalid Order
+
+**Check Order Status → Nonexistent Order Number → Backend Lookup → No Matching Transaction → Not-Found Message**
+
+### Chatbot
+
+**Product Catalogue → Ask Morena Bakery → Customer Question → Serverless Chat Backend → AI Provider → Grounded Response**
+
+---
 
 ## Database Requirements
 
@@ -188,7 +262,7 @@ The main transaction table is:
 
 `order_requests`
 
-The transaction includes the following fields:
+### Transaction Fields
 
 - `id`
 - `created_at`
@@ -200,77 +274,125 @@ The transaction includes the following fields:
 - `status`
 - `order_code`
 
-Database requirements include:
+### Required Core Transaction Data
 
-- Primary key for transaction identity
-- Required transaction fields
-- Unique order number
-- Required order number
-- Default initial status
+The following customer transaction information must be present when an order request is submitted:
+
+- Product
+- Quantity
+- Customer name
+- Phone
+- Requested delivery date
+
+### Database Constraints
+
+The implementation includes:
+
+- Primary key on `id`
+- Required core transaction fields
+- Unique `order_code`
+- Default `Pending` status
 - Controlled valid status values
-- Persistent storage of successful transactions
+
+The supported status values are:
+
+- `Pending`
+- `Confirmed`
+- `Completed`
+- `Cancelled`
+
+The `order_code` field is intentionally nullable during the first persistence step because the database-generated `id` is required to construct the customer-facing `MB-ID` value.
+
+---
 
 ## Serverless Backend Requirements
 
-### Order Creation Endpoint
+The product must use its own serverless backend for transaction and chatbot operations.
 
-`/api/order-request`
+### `/api/order-request`
 
-Requirements:
+Purpose:
 
-- Accept `POST` requests.
-- Reject unsupported HTTP methods.
-- Validate required transaction fields.
-- Use the Supabase service credential only on the server side.
-- Insert the order into Supabase.
-- Generate and persist the customer-facing order number.
-- Return the successful transaction information.
+- Accept customer order requests
+- Validate required fields
+- Use the Supabase credential server-side
+- Persist the transaction
+- Receive the database-generated ID
+- Generate the customer-facing order number
+- Persist the order number
+- Return successful transaction information
 
-### Order Status Endpoint
+Method:
 
-`/api/order-status`
+`POST`
 
-Requirements:
+### `/api/order-status`
 
-- Accept `GET` requests.
-- Reject unsupported HTTP methods.
-- Require an order number.
-- Read the matching transaction from Supabase.
-- Return only the information required for customer status tracking.
-- Return a clear not-found response when the order does not exist.
-- Avoid returning the customer's name or phone number.
-- Prevent unnecessary caching of order status responses.
+Purpose:
 
-### Chat Endpoint
+- Accept an order number
+- Validate and normalize the supplied value
+- Query Supabase from the server side
+- Return the matching transaction's non-sensitive information
+- Return a not-found response when no transaction exists
 
-`/api/chat`
+Method:
 
-Requirements:
+`GET`
 
-- Accept `POST` requests.
-- Reject unsupported HTTP methods.
-- Validate that a customer message is present.
-- Use the AI provider API key only on the server side.
-- Provide Morena Bakery business context to ground the response.
-- Return the assistant response to the customer interface.
-- Avoid exposing the AI API key to the browser.
+Public response information:
+
+- ID
+- Order number
+- Products
+- Quantities
+- Requested delivery date
+- Status
+
+The public status endpoint must not return:
+
+- Customer name
+- Phone number
+
+### `/api/chat`
+
+Purpose:
+
+- Accept customer questions
+- Use the AI API credential server-side
+- Supply Morena Bakery grounding information
+- Return a customer-facing response
+
+Method:
+
+`POST`
+
+---
 
 ## Grounded AI Chatbot Requirements
 
-The Ask Morena Bakery assistant must answer based on the Morena Bakery information supplied in its grounding context.
+The product includes a customer-facing assistant called:
 
-The assistant may provide guidance about:
+**Ask Morena Bakery**
 
-- Available products included in its provided context
-- The customer ordering process
-- Multi-product order requests
+The chatbot must answer using the Morena Bakery information supplied through its server-side context.
+
+### Supported Topics
+
+The chatbot may answer supported questions about:
+
+- Morena Bakery products included in its context
+- How to place an order
+- Multi-product ordering
 - Order numbers
 - Initial order status
 - How to use Check Order Status
 
-The assistant must not invent unavailable information such as:
+### Grounding Rules
 
-- Prices not included in its grounding context
+The chatbot must not invent unsupported information such as:
+
+- Prices not included in its context
 - Ingredients
 - Product sizes
 - Delivery fees
@@ -278,91 +400,156 @@ The assistant must not invent unavailable information such as:
 - Opening hours
 - Addresses
 - Promotions
-- Policies not included in its context
+- Unsupported business policies
 
-When requested information is unavailable, the assistant should state that it does not have the information and recommend contacting Morena Bakery directly for confirmation.
+If information is unavailable, the assistant should explain that it does not have that information and recommend contacting Morena Bakery directly for confirmation.
 
-The chatbot must not claim to access or modify an individual customer order. Customers asking about a specific order should be directed to Check Order Status.
+### Order-Specific Questions
+
+The chatbot does not directly access individual customer transactions.
+
+When a customer asks about a specific order, the assistant should direct the customer to Check Order Status.
+
+---
 
 ## Security Requirements
 
-- `SUPABASE_SERVICE_KEY` must remain server-side.
-- `OPENAI_API_KEY` must remain server-side.
-- Secret credentials must not be included in public frontend JavaScript.
-- Secret credentials must not be committed to the repository.
-- The public order status endpoint must not return the customer's phone number.
-- The public order status endpoint must not return the customer's name.
-- Order status responses should not be unnecessarily cached.
+Sensitive credentials must remain on the server side.
+
+The deployed application uses:
+
+- `SUPABASE_SERVICE_KEY`
+- `OPENAI_API_KEY`
+
+These values must be configured as deployment environment variables.
+
+Secret values must not be exposed in:
+
+- HTML
+- Public frontend JavaScript
+- Repository documentation
+- Committed `.env` files
+
+The order status endpoint must limit its public response to non-sensitive order information.
+
+---
 
 ## Validation Requirements
 
-The following scenarios must be tested before final delivery:
+The Delivery 4 implementation must validate the following scenarios:
 
-1. Customer can browse the live product catalogue.
-2. Customer can add multiple products to an order.
-3. Customer can change product quantities.
-4. Customer can enter the required customer information.
-5. Customer can submit an order successfully.
+1. Product catalogue loads successfully.
+2. Product details can be viewed.
+3. A customer can create an order containing more than one product.
+4. Required customer and delivery information can be submitted.
+5. The request passes through the project's own serverless backend.
 6. The transaction is persisted in Supabase.
-7. The transaction receives a unique `MB-XX` order number.
-8. The transaction receives the initial status `Pending`.
-9. The customer can retrieve a valid order using Check Order Status.
-10. A nonexistent order number returns a clear not-found response.
-11. The chatbot answers a question supported by its Morena Bakery context.
-12. The chatbot does not invent information that is absent from its context.
-13. The chatbot directs order-specific questions to Check Order Status.
-14. The live application works through its public Vercel URL.
+7. A unique order number is generated and persisted.
+8. A new transaction receives the `Pending` status.
+9. The customer receives a successful confirmation.
+10. A valid order number can retrieve the transaction.
+11. A nonexistent order number returns a clear not-found response.
+12. Public status lookup does not expose customer name or phone.
+13. The chatbot answers a supported Morena Bakery question.
+14. The chatbot does not invent unavailable information.
+15. The chatbot explains the ordering process.
+16. The chatbot directs order-specific questions to Check Order Status.
+
+---
+
+## Delivery 4 Final Validation
+
+The final deployed product was validated using the transaction:
+
+`MB-15`
+
+### Final Transaction
+
+Products:
+
+- 1x Banana Bread
+- 1x Red Velvet Heart Cake
+
+Status:
+
+`Pending`
+
+Requested delivery date:
+
+`2026-09-05`
+
+The transaction was successfully:
+
+- Submitted through the deployed Morena Bakery product
+- Processed by the project's serverless backend
+- Persisted in Supabase
+- Assigned the customer-facing order number `MB-15`
+- Stored with `Pending` status
+- Retrieved through Check Order Status
+
+The nonexistent order:
+
+`MB-99999`
+
+was also tested and returned a clear not-found response.
+
+The grounded chatbot was tested with questions covering:
+
+- Available products
+- Unavailable price information
+- How to place an order
+- Status of a specific order
+
+The chatbot remained within its supplied Morena Bakery context and directed the order-specific question to Check Order Status.
+
+---
 
 ## Success Criteria
 
-The current Morena Bakery pilot will be considered successful when:
+Delivery 4 is successful when:
 
-- Customers can complete the core order transaction from the live product.
-- The transaction goes through the project's own serverless backend.
-- The transaction is stored persistently in Supabase.
-- Required database constraints are present.
-- A unique order number is persisted.
-- A meaningful transaction status is stored.
-- Customers can retrieve an existing transaction by order number.
-- Invalid order numbers produce a sensible not-found response.
-- The grounded AI chatbot is reachable from the live product.
-- The chatbot communicates through the project's own serverless backend.
-- The AI API key remains server-side.
-- The chatbot stays within its provided Morena Bakery context.
-- The README contains the public product URL.
-- The project specification reflects the implemented product.
-- Final transaction evidence is documented for Delivery 4.
+- A customer can complete the core order-request transaction.
+- The transaction passes through the project's own serverless function.
+- The transaction is persisted in the project's Supabase database.
+- The transaction receives a unique customer-facing order number.
+- The transaction stores an initial status.
+- The customer can retrieve the transaction using the order number.
+- A nonexistent order number produces sensible not-found behavior.
+- The AI chatbot operates through the project's own backend.
+- The AI credential remains server-side.
+- The chatbot provides grounded Morena Bakery responses.
+- The complete product is accessible through the public deployment.
+
+---
 
 ## Out of Scope
 
-The current Morena Bakery pilot does not include:
+The following features are not required for the current Morena Bakery Delivery 4 implementation:
 
-- Online payment processing
-- Customer accounts or login
+- Payment gateway
+- Customer login
+- Customer accounts
 - Administrative dashboard
-- Third-party delivery service integration
-- Multiple active bakery storefronts
-- Bakery tenant administration
-- Full multi-tenant order management
+- Multiple active bakery tenants
+- Tenant administration
+- Full order-management dashboard
+- Third-party delivery integration
 - Automatic order confirmation
-- Real-time delivery tracking
 
-These features are not required for the current Delivery 4 implementation.
+---
 
-## Future Product Direction
+## Future Development
 
-The broader multi-bakery subscription platform may later include:
+Future versions may expand the platform to support:
 
-- Multiple independent bakery storefronts
-- Tenant-based bakery data separation
-- Bakery administration tools
-- Product customization
-- Calendar availability
-- Automatic quotations
+- Multiple bakery tenants
+- Tenant-specific branding
+- Tenant-specific product catalogues
+- Administrative order management
+- Customer accounts
 - Payment processing
 - Delivery integrations
-- Customer accounts
-- Advanced order management
-- Image upload
+- Additional transaction types
+- More advanced customer-service automation
 
-These features are part of the future product direction and are not presented as functionality currently implemented in the Morena Bakery pilot.
+These features are outside the scope of the current Morena Bakery pilot and Delivery 4.

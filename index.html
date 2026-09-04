@@ -51,6 +51,94 @@
       href="styles.css"
       rel="stylesheet"
     >
+
+    <style>
+      .chat-section {
+        margin: 4rem 0 2rem;
+        padding: 2rem;
+        border: 1px solid #e7ded8;
+        border-radius: 18px;
+        background: #fffaf6;
+      }
+
+      .chat-header {
+        margin-bottom: 1.5rem;
+      }
+
+      .chat-header h2 {
+        margin-bottom: 0.5rem;
+      }
+
+      .chat-header p {
+        margin-bottom: 0;
+        color: #6f625c;
+      }
+
+      .chat-window {
+        min-height: 180px;
+        max-height: 380px;
+        overflow-y: auto;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e7ded8;
+        border-radius: 14px;
+        background: #ffffff;
+      }
+
+      .chat-message {
+        margin-bottom: 1rem;
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        line-height: 1.5;
+      }
+
+      .chat-message-user {
+        margin-left: 12%;
+        background: #f2e8e3;
+      }
+
+      .chat-message-assistant {
+        margin-right: 12%;
+        background: #f8f6f4;
+      }
+
+      .chat-message strong {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .chat-form {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .chat-form input {
+        flex: 1;
+      }
+
+      .chat-status {
+        margin-top: 0.75rem;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+        color: #6f625c;
+      }
+
+      @media (max-width: 576px) {
+        .chat-section {
+          padding: 1.25rem;
+        }
+
+        .chat-form {
+          flex-direction: column;
+        }
+
+        .chat-message-user,
+        .chat-message-assistant {
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -149,6 +237,70 @@
 
       </section>
 
+      <section
+        class="chat-section"
+        aria-labelledby="chat-title"
+      >
+        <div class="chat-header">
+
+          <p class="eyebrow">
+            Need help?
+          </p>
+
+          <h2 id="chat-title">
+            Ask Morena Bakery
+          </h2>
+
+          <p>
+            Ask about our products, placing an order,
+            or checking an order status.
+          </p>
+
+        </div>
+
+        <div
+          id="chat-window"
+          class="chat-window"
+          aria-live="polite"
+        >
+          <div class="chat-message chat-message-assistant">
+            <strong>Morena Bakery</strong>
+            Hi! How can I help you today?
+          </div>
+        </div>
+
+        <form
+          id="chat-form"
+          class="chat-form"
+        >
+          <input
+            id="chat-message"
+            class="form-control"
+            type="text"
+            name="message"
+            maxlength="1000"
+            placeholder="Ask a question..."
+            autocomplete="off"
+            required
+          >
+
+          <button
+            id="chat-submit"
+            class="btn btn-dark"
+            type="submit"
+          >
+            Send
+          </button>
+        </form>
+
+        <p
+          id="chat-status"
+          class="chat-status"
+          role="status"
+        ></p>
+
+      </section>
+
     </main>
 
     <script
@@ -156,6 +308,122 @@
     ></script>
 
     <script src="app.js"></script>
+
+    <script>
+      const chatForm = document.getElementById("chat-form");
+      const chatMessageField =
+        document.getElementById("chat-message");
+      const chatWindow =
+        document.getElementById("chat-window");
+      const chatStatus =
+        document.getElementById("chat-status");
+      const chatSubmit =
+        document.getElementById("chat-submit");
+
+      function addChatMessage(role, message) {
+        const messageElement =
+          document.createElement("div");
+
+        messageElement.className =
+          role === "user"
+            ? "chat-message chat-message-user"
+            : "chat-message chat-message-assistant";
+
+        const label =
+          role === "user"
+            ? "You"
+            : "Morena Bakery";
+
+        const strong =
+          document.createElement("strong");
+
+        strong.textContent = label;
+
+        const text =
+          document.createElement("span");
+
+        text.textContent = message;
+
+        messageElement.appendChild(strong);
+        messageElement.appendChild(text);
+
+        chatWindow.appendChild(messageElement);
+
+        chatWindow.scrollTop =
+          chatWindow.scrollHeight;
+      }
+
+      chatForm.addEventListener(
+        "submit",
+        async (event) => {
+          event.preventDefault();
+
+          const message =
+            chatMessageField.value.trim();
+
+          if (!message) {
+            return;
+          }
+
+          addChatMessage("user", message);
+
+          chatMessageField.value = "";
+          chatMessageField.disabled = true;
+          chatSubmit.disabled = true;
+
+          chatStatus.textContent =
+            "Morena Bakery is typing...";
+
+          try {
+            const response =
+              await fetch("/api/chat", {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+                },
+
+                body: JSON.stringify({
+                  message,
+                }),
+              });
+
+            const data =
+              await response.json();
+
+            if (!response.ok) {
+              throw new Error(
+                data?.error ||
+                "The chatbot could not respond."
+              );
+            }
+
+            addChatMessage(
+              "assistant",
+              data.answer
+            );
+
+            chatStatus.textContent = "";
+          } catch (error) {
+            console.error(error);
+
+            addChatMessage(
+              "assistant",
+              "Sorry, I could not answer right now. Please try again."
+            );
+
+            chatStatus.textContent =
+              "There was a problem connecting to the assistant.";
+          } finally {
+            chatMessageField.disabled = false;
+            chatSubmit.disabled = false;
+
+            chatMessageField.focus();
+          }
+        }
+      );
+    </script>
 
   </body>
 </html>

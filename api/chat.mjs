@@ -34,12 +34,12 @@ Customers can:
 - Enter their name.
 - Enter their phone number.
 - Select a requested delivery date.
-- Submit the order request through the website.
+- Review products, quantities, contact information and delivery date, then confirm the order through the website.
 
 After submission:
 - The order is saved in the Morena Bakery database.
 - The customer receives an order number such as MB-13.
-- New orders initially have the status "Pending".
+- New orders initially have the status "Received". The status flow is Received -> Confirmed -> Preparing -> Completed.
 - The order number can be used on the Check Order Status page.
 
 ORDER STATUS

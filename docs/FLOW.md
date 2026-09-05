@@ -1,5 +1,8 @@
 # Morena Bakery — Product and Transaction Flow
 
+> Online-order update: see [setup and migration instructions](ONLINE-ORDER-SETUP.md). The current flow adds an explicit review step, structured items, atomic folio creation, and Received → Confirmed → Preparing → Completed. The Delivery 4 descriptions and validation records below document the earlier implementation.
+
+
 ## Project
 
 Multi-Bakery Subscription Platform — Morena Bakery Pilot

@@ -1,5 +1,8 @@
 # Multi-Bakery Subscription Platform
 
+> Online-order update: see [setup and migration instructions](docs/ONLINE-ORDER-SETUP.md). The current flow adds an explicit review step, structured items, atomic folio creation, and Received → Confirmed → Preparing → Completed. The Delivery 4 descriptions and validation records below document the earlier implementation.
+
+
 ## Overview
 
 This project is a subscription-based digital platform concept designed for small bakeries and dessert businesses.

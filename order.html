@@ -340,17 +340,6 @@
                   Choose a product
                 </option>
 
-                <option value="Red Velvet Heart Cake">
-                  Red Velvet Heart Cake
-                </option>
-
-                <option value="Box of 6 Cupcakes">
-                  Box of 6 Cupcakes
-                </option>
-
-                <option value="Banana Bread">
-                  Banana Bread
-                </option>
               </select>
             </div>
 
@@ -437,8 +426,17 @@
           class="submit-button"
           type="submit"
         >
-          Send order request
+          Review order
         </button>
+
+      </form>
+
+      <section id="order-review" class="order-form" aria-labelledby="review-title" hidden>
+        <h2 id="review-title" tabindex="-1">Review your order</h2>
+        <div id="review-details"></div>
+        <button id="edit-order" class="secondary-button" type="button">Edit order</button>
+        <button id="confirm-order" class="submit-button" type="button">Confirm order</button>
+      </section>
 
         <div
           id="form-message"
@@ -448,11 +446,9 @@
           hidden
         ></div>
 
-      </form>
-
     </main>
 
-    <script>
+    <script type="module">
 
       const form =
         document.querySelector("#order-form");
@@ -492,6 +488,21 @@
       const selectedQuantity =
         Number(params.get("quantity"));
 
+      try {
+        const response = await fetch("data/products.json");
+        if (!response.ok) throw new Error("Catalogue unavailable");
+        const products = await response.json();
+        for (const product of products.filter((item) => item.bakery === "Morena" && item.available)) {
+          productField.add(new Option(product.name, product.name));
+        }
+      } catch {
+        message.hidden = false;
+        message.className = "form-message error";
+        message.textContent = "Products could not be loaded. Please reload the page to try again.";
+        addProductButton.disabled = true;
+        submitButton.disabled = true;
+      }
+
       if (selectedProduct) {
         const productExists =
           Array.from(productField.options).some(
@@ -519,7 +530,7 @@
       );
 
       deliveryDate.min =
-        tomorrow.toLocaleDateString("en-CA");
+        [tomorrow.getFullYear(), String(tomorrow.getMonth() + 1).padStart(2, "0"), String(tomorrow.getDate()).padStart(2, "0")].join("-");
 
       function renderCart() {
 
@@ -540,7 +551,7 @@
             itemElement.innerHTML = `
               <div>
                 <div class="cart-item-name">
-                  ${item.product}
+                  ${escapeHtml(item.product)}
                 </div>
 
                 <div class="cart-item-meta">
@@ -690,195 +701,108 @@
         }
       );
 
-      form.addEventListener(
-        "submit",
-        async (event) => {
+      const review = document.querySelector("#order-review");
+      const reviewDetails = document.querySelector("#review-details");
+      const editButton = document.querySelector("#edit-order");
+      const confirmButton = document.querySelector("#confirm-order");
+      const cartBox = document.querySelector(".cart-box");
+      let reviewedOrder = null;
+      let sending = false;
+      let completed = false;
 
-          event.preventDefault();
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[character]);
+      }
 
-          if (cart.length === 0) {
-            message.hidden = false;
-            message.className =
-              "form-message error";
-
-            message.textContent =
-              "Please add at least one product to your order.";
-
-            return;
-          }
-
-          submitButton.disabled = true;
-
-          submitButton.textContent =
-            "Sending…";
-
-          message.hidden = true;
-
-          message.className =
-            "form-message";
-
-          const formData =
-            new FormData(form);
-
-          const productSummary =
-            cart
-              .map(
-                (item) =>
-                  `${item.quantity}x ${item.product}`
-              )
-              .join(" | ");
-
-          const quantitySummary =
-            cart
-              .map(
-                (item) =>
-                  `${item.quantity}`
-              )
-              .join(", ");
-
-          const orderRequest = {
-            product: productSummary,
-
-            quantity:
-              quantitySummary,
-
-            customer_name:
-              formData.get(
-                "customer_name"
-              ),
-
-            phone:
-              formData.get("phone"),
-
-            delivery_date:
-              formData.get(
-                "delivery_date"
-              ),
-          };
-
-          let result = null;
-          let error = null;
-
-          try {
-
-            const apiResponse =
-              await fetch(
-                "/api/order-request",
-                {
-                  method: "POST",
-
-                  headers: {
-                    "Content-Type":
-                      "application/json",
-                  },
-
-                  body:
-                    JSON.stringify(
-                      orderRequest
-                    ),
-                }
-              );
-
-            result =
-              await apiResponse.json();
-
-            if (!apiResponse.ok) {
-
-              const details =
-                result.error;
-
-              error = {
-                message:
-                  typeof details ===
-                  "string"
-                    ? details
-                    : details?.message ||
-                      JSON.stringify(
-                        details
-                      ),
-              };
-            }
-
-          } catch (requestError) {
-
-            error = {
-              message:
-                requestError instanceof Error
-                  ? requestError.message
-                  : String(requestError),
-            };
-          }
-
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (sending || completed || !form.reportValidity()) return;
+        const formData = new FormData(form);
+        const customerName = formData.get("customer_name").trim();
+        const phone = formData.get("phone").trim();
+        if (!cart.length || !customerName || !phone) {
           message.hidden = false;
-
-          if (error) {
-
-            message.classList.add(
-              "error"
-            );
-
-            message.textContent =
-              `Your order could not be saved: ${error.message}`;
-
-            submitButton.disabled =
-              false;
-
-            submitButton.textContent =
-              "Send order request";
-
-            return;
-          }
-
-          const orderCode =
-            result?.order?.order_code ||
-            "Not available";
-
-          const status =
-            result?.order?.status ||
-            "Pending";
-
-          message.classList.add(
-            "success"
-          );
-
-          message.innerHTML = `
-            Thank you! Your order request has been saved.
-
-            <span class="order-code">
-              Order ${orderCode}
-            </span>
-
-            Status: ${status}
-
-            <br><br>
-
-            Please save your order number.
-            You will use it to check your order status.
-
-            <br>
-
-            <a
-              class="status-link"
-              href="order-status.html?order_code=${encodeURIComponent(orderCode)}"
-            >
-              <i
-                class="bi bi-search"
-                aria-hidden="true"
-              ></i>
-              Check Order Status
-            </a>
-          `;
-
-          submitButton.textContent =
-            "Order request sent";
-
-          form.reset();
-
-          cart = [];
-
-          renderCart();
+          message.className = "form-message error";
+          message.textContent = "Add at least one product and enter your name and phone number.";
+          return;
         }
-      );
+        reviewedOrder = {
+          items: cart.map(({ product, quantity }) => ({ product, quantity })),
+          customer_name: customerName,
+          phone,
+          delivery_date: formData.get("delivery_date"),
+        };
+        reviewDetails.innerHTML = `
+          <ul>${reviewedOrder.items.map((item) => `<li>${escapeHtml(item.product)} — Quantity: ${item.quantity}</li>`).join("")}</ul>
+          <p><strong>Customer name:</strong> ${escapeHtml(reviewedOrder.customer_name)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(reviewedOrder.phone)}</p>
+          <p><strong>Delivery date:</strong> ${escapeHtml(reviewedOrder.delivery_date)}</p>
+          <p>Morena Bakery will contact you to confirm your request.</p>
+        `;
+        message.hidden = true;
+        form.hidden = true;
+        cartBox.hidden = true;
+        review.hidden = false;
+        document.querySelector("#review-title").focus();
+      });
+
+      editButton.addEventListener("click", () => {
+        if (sending || completed) return;
+        reviewedOrder = null;
+        review.hidden = true;
+        form.hidden = false;
+        cartBox.hidden = false;
+        message.hidden = true;
+        document.querySelector("#customer_name").focus();
+      });
+
+      confirmButton.addEventListener("click", async () => {
+        if (sending || completed || !reviewedOrder) return;
+        sending = true;
+        confirmButton.disabled = true;
+        editButton.disabled = true;
+        confirmButton.textContent = "Sending…";
+        message.hidden = true;
+        try {
+          const response = await fetch("/api/order-request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reviewedOrder),
+          });
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(typeof result.error === "string" ? result.error : "The order could not be saved.");
+          }
+          const order = result.order;
+          if (!result.success || !order?.order_code || !order?.status) {
+            throw new Error("The service did not return a folio and status. Contact Morena Bakery before retrying.");
+          }
+          // Render only the creation response: no order lookup or database read.
+          message.className = "form-message success";
+          message.innerHTML = `
+            <h2 tabindex="-1" id="confirmation-title">Your order was received successfully!</h2>
+            <span class="order-code">Order folio: ${escapeHtml(order.order_code)}</span>
+            <p>Status: ${escapeHtml(order.status)}</p>
+            <p>Please save your order folio to check its status later.</p>
+            <a class="status-link" href="order-status.html?order_code=${encodeURIComponent(order.order_code)}">Check Order Status</a>
+          `;
+          completed = true;
+          review.hidden = true;
+          message.hidden = false;
+          document.querySelector("#confirmation-title").focus();
+        } catch (error) {
+          message.className = "form-message error";
+          message.textContent = error.message || "The service could not confirm your order. Contact Morena Bakery before retrying.";
+          message.hidden = false;
+        } finally {
+          sending = false;
+          confirmButton.disabled = completed;
+          editButton.disabled = completed;
+          confirmButton.textContent = "Confirm order";
+        }
+      });
 
       renderCart();
 
